@@ -1,7 +1,7 @@
 package installer
 
 import (
-	"bitbucket.org/kardianos/osext"
+	"github.com/kardianos/osext"
 
 	"bytes"
 	"errors"
