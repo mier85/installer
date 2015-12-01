@@ -97,21 +97,25 @@ func Install(user string) (rErr error) {
 		rErr = fileWriteError
 		return
 	}
-	cmd := exec.Command("update-rc.d", command, "defaults")
-	if out, execErr := cmd.CombinedOutput(); nil != execErr {
-		//@TODO: rollback , delete init.d script
-		rErr = execErr
-		return
-	} else {
-		fmt.Println(string(out))
-	}
+	/*
+		cmd := exec.Command("update-rc.d", command, "defaults")
+		if out, execErr := cmd.CombinedOutput(); nil != execErr {
+			//@TODO: rollback , delete init.d script
+			rErr = execErr
+			return
+		} else {
+			fmt.Println(string(out))
+		}
+	*/
 	return
 }
 
-func Register() {
+func Register(parse bool) {
 	var install = flag.Bool("install", false, "install this program as service")
 	var runAsUser = flag.String("installRunAsUser", "", "which user should the service run as")
-	flag.Parse()
+	if parse {
+		flag.Parse()
+	}
 	if !*install {
 		return
 	}
