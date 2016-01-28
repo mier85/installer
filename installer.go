@@ -110,9 +110,10 @@ func Install(user string) (rErr error) {
 	return
 }
 
+var install = flag.Bool("install", false, "install this program as service")
+var runAsUser = flag.String("installRunAsUser", "", "which user should the service run as")
+
 func Register(parse bool) {
-	var install = flag.Bool("install", false, "install this program as service")
-	var runAsUser = flag.String("installRunAsUser", "", "which user should the service run as")
 	if parse {
 		flag.Parse()
 	}
