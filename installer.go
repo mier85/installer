@@ -21,9 +21,8 @@ func GetInitDPath(name string) string {
 func IsInitDScriptExist(name string) bool {
 	if _, err := os.Stat(GetInitDPath(name)); os.IsExist(err) {
 		return true
-	} else {
-		return false
 	}
+	return false
 }
 
 func GetInitDScript(folder, command, user string) (ret string, err error) {
@@ -84,16 +83,21 @@ func Install(user string) (rErr error) {
 		rErr = errors.New("not yet supported")
 		return
 	}
+
+	if *serviceName == "" {
+		*serviceName = command
+	}
+
 	var script string
-	if IsInitDScriptExist(command) {
-		rErr = errors.New(fmt.Sprintf("Script %s already exists in init.d folder", command))
+	if IsInitDScriptExist(*serviceName) {
+		rErr = fmt.Errorf("Script %s already exists in init.d folder", command)
 		return
 	}
 	if script, err = GetInitDScript(folder, command, user); nil != err {
 		rErr = err
 		return
 	}
-	if fileWriteError := WriteInitD(command, script); nil != fileWriteError {
+	if fileWriteError := WriteInitD(*serviceName, script); nil != fileWriteError {
 		rErr = fileWriteError
 		return
 	}
@@ -112,6 +116,7 @@ func Install(user string) (rErr error) {
 
 var install = flag.Bool("install", false, "install this program as service")
 var runAsUser = flag.String("installRunAsUser", "", "which user should the service run as")
+var serviceName = flag.String("serviceName", "", "[optional] service name")
 
 func Register(parse bool) {
 	if parse {
