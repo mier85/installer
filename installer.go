@@ -21,9 +21,8 @@ func GetInitDPath(name string) string {
 func IsInitDScriptExist(name string) bool {
 	if _, err := os.Stat(GetInitDPath(name)); os.IsExist(err) {
 		return true
-	} else {
-		return false
 	}
+	return false
 }
 
 func GetInitDScript(folder, command, user string) (ret string, err error) {
@@ -91,7 +90,7 @@ func Install(user string, serviceName string) (rErr error) {
 
 	var script string
 	if IsInitDScriptExist(serviceName) {
-		rErr = errors.New(fmt.Sprintf("Script %s already exists in init.d folder", command))
+		rErr = fmt.Errorf("Script %s already exists in init.d folder", command)
 		return
 	}
 	if script, err = GetInitDScript(folder, command, user); nil != err {
