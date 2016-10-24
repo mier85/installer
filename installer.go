@@ -72,7 +72,7 @@ func MakeInitDExecutable(name string) (rErr error) {
 	return
 }
 
-func Install(user string) (rErr error) {
+func Install(user string, serviceName string) (rErr error) {
 	pathToExe, err := osext.Executable()
 	folder, command := filepath.Split(pathToExe)
 	if nil != err {
@@ -84,8 +84,13 @@ func Install(user string) (rErr error) {
 		rErr = errors.New("not yet supported")
 		return
 	}
+
+	if serviceName == "" {
+		serviceName = command
+	}
+
 	var script string
-	if IsInitDScriptExist(command) {
+	if IsInitDScriptExist(serviceName) {
 		rErr = errors.New(fmt.Sprintf("Script %s already exists in init.d folder", command))
 		return
 	}
@@ -93,7 +98,7 @@ func Install(user string) (rErr error) {
 		rErr = err
 		return
 	}
-	if fileWriteError := WriteInitD(command, script); nil != fileWriteError {
+	if fileWriteError := WriteInitD(serviceName, script); nil != fileWriteError {
 		rErr = fileWriteError
 		return
 	}
@@ -112,6 +117,7 @@ func Install(user string) (rErr error) {
 
 var install = flag.Bool("install", false, "install this program as service")
 var runAsUser = flag.String("installRunAsUser", "", "which user should the service run as")
+var serviceName = flag.String("serviceName", "", "[optional] service name")
 
 func Register(parse bool) {
 	if parse {
@@ -124,7 +130,7 @@ func Register(parse bool) {
 		fmt.Println("you must specify a user that the service runs as")
 		os.Exit(1)
 	}
-	if err := Install(*runAsUser); err != nil {
+	if err := Install(*runAsUser, *serviceName); err != nil {
 		fmt.Printf("installing as service failed: <%v> \n", err)
 		os.Exit(1)
 	}
