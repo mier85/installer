@@ -1,3 +1,7 @@
+# DEPRECATED
+
+use systemd or docker & kubernetes or anything else  
+
 installer
 =========
 
